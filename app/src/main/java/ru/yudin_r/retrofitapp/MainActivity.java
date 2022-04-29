@@ -4,32 +4,52 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import ru.yudin_r.retrofitapp.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
+
+    private ActivityMainBinding binding;
+    String version = "2.5";
+    String apiKey =  "46633b8bd46722664e218858b12874b8";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        binding.searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String city = binding.cityField.getText().toString();
+                getWeatherData(city);
+            }
+        });
+    }
 
-        String version = "2.5";
-        String apiKey =  "46633b8bd46722664e218858b12874b8";
-
+    private void getWeatherData(String city) {
         Retrofit retrofit = new Retrofit.Builder().baseUrl("https://api.openweathermap.org/data/")
                 .addConverterFactory(GsonConverterFactory.create()).build();
         WeatherApi weatherApi = retrofit.create(WeatherApi.class);
-        Call<Example> call = weatherApi.weatherList(version, "Moscow", apiKey);
+        Call<Example> call = weatherApi.weatherList(version, city, apiKey);
         call.enqueue(new Callback<Example>() {
             @Override
             public void onResponse(Call<Example> call, Response<Example> response) {
                 Example example = response.body();
-                Log.d("RETROFIT", example.getMain().getTemp().toString());
+                Double tempDouble = example.getMain().getTemp() - 273;
+                int tempInt = tempDouble.intValue();
+                binding.tempTextView.setText(tempInt + " °");
+                binding.cityTextView.setText(example.getName());
+                binding.humidityTextView.setText("Влажность: " +
+                        example.getMain().getHumidity().toString() + " %");
+                binding.windTextView.setText("Ветер: " +
+                        example.getWind().getSpeed().toString() + " М/с");
             }
 
             @Override
