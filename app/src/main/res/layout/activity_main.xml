@@ -24,7 +24,11 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/cityField"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:imeOptions="actionDone"
+            android:textSize="@dimen/_13ssp"
+            android:inputType="textCapWords" />
 
     </com.google.android.material.textfield.TextInputLayout>
 

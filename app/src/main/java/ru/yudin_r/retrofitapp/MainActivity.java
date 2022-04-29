@@ -1,10 +1,13 @@
 package ru.yudin_r.retrofitapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -41,6 +44,9 @@ public class MainActivity extends AppCompatActivity {
         call.enqueue(new Callback<Example>() {
             @Override
             public void onResponse(Call<Example> call, Response<Example> response) {
+                if (response.code()==404) {
+                    showMsg("Ошибка 404, проверьте введенный город!");
+                }
                 Example example = response.body();
                 Double tempDouble = example.getMain().getTemp() - 273;
                 int tempInt = tempDouble.intValue();
@@ -54,8 +60,17 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Example> call, Throwable t) {
-
+                Log.e("Retrofit Error", t.toString());
+                showMsg(t.toString());
             }
         });
+    }
+
+    private void showMsg(String e) {
+        Snackbar snackBar = Snackbar.make(findViewById(android.R.id.content), e,
+                Snackbar.LENGTH_LONG);
+        View snackBarView = snackBar.getView();
+        snackBarView.setBackgroundColor(ContextCompat.getColor(this, R.color.error));
+        snackBar.show();
     }
 }
