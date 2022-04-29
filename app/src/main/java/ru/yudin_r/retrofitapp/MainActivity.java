@@ -44,23 +44,25 @@ public class MainActivity extends AppCompatActivity {
         call.enqueue(new Callback<Example>() {
             @Override
             public void onResponse(Call<Example> call, Response<Example> response) {
-                if (response.code()==404) {
-                    showMsg("Ошибка 404, проверьте введенный город!");
+                if (!response.isSuccessful()) {
+                    showMsg("Ощибка  " + response.code() + ". Виноват разработчик или API");
                 }
-                Example example = response.body();
-                Double tempDouble = example.getMain().getTemp() - 273;
-                int tempInt = tempDouble.intValue();
-                binding.tempTextView.setText(tempInt + " °");
-                binding.cityTextView.setText(example.getName());
-                binding.humidityTextView.setText("Влажность: " +
-                        example.getMain().getHumidity().toString() + " %");
-                binding.windTextView.setText("Ветер: " +
-                        example.getWind().getSpeed().toString() + " М/с");
+                else {
+                    Example example = response.body();
+                    Double tempDouble = example.getMain().getTemp() - 273;
+                    int tempInt = tempDouble.intValue();
+                    binding.tempTextView.setText(tempInt + " °");
+                    binding.cityTextView.setText(example.getName());
+                    binding.humidityTextView.setText("Влажность: " +
+                            example.getMain().getHumidity().toString() + " %");
+                    binding.windTextView.setText("Ветер: " +
+                            example.getWind().getSpeed().toString() + " М/с");
+                }
             }
 
             @Override
             public void onFailure(Call<Example> call, Throwable t) {
-                Log.e("Retrofit Error", t.toString());
+                showMsg("Eror " + t.toString());
                 showMsg(t.toString());
             }
         });
