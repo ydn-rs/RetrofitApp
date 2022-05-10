@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     String version = "2.5";
-    String apiKey =  "46633b8bd46722664e218858b12874b8";
+    String apiKey =  ""; // openweathermap.org API KEY HERE
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
